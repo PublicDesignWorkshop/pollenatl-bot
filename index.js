@@ -33,10 +33,11 @@ request(options, function(error, response, body) {
   request.get('http://wwc.instacam.com/instacamimg/ATLGM/ATLGM_l.jpg', function(error, response, imageBuffer) {
     Jimp.read(new Buffer(imageBuffer))
     .then(function(image) {
-      var factor = pollenIndex * pollenIndex;
+      // index is out of 12
+      var factor = pollenIndex;
       // use Jimp.RESIZE_NEAREST_NEIGHBOR algorithm for mosaic/pixelate effect
       image.scale(1 / factor, Jimp.RESIZE_NEAREST_NEIGHBOR);
-      image.quality(100 - ((factor / 26) * 100));
+      image.quality(100 - ((factor / 12) * 100));
       image.scale(factor, Jimp.RESIZE_NEAREST_NEIGHBOR);
       image.getBuffer(Jimp.MIME_JPEG, function(err, buffer) {
         console.log(err);
