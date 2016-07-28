@@ -1,2 +1,4 @@
 node_modules
 twitter-config.js
+*log
+script.sh
