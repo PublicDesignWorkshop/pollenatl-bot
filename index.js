@@ -22,6 +22,7 @@ var options = {
   }
 };
 
+console.log(Date());
 request(options, function(error, response, body) {
   // period index 1 represents Today's data
   var pollenIndex = body.Location.periods[1].Index;
@@ -30,7 +31,9 @@ request(options, function(error, response, body) {
     triggers.push(body.Location.periods[1].Triggers[i].Name);
   }
   var status = 'The Pollen Index in Atlanta today is ' + pollenIndex + '. Triggers include: ' + triggers.join(', ') + '.';
+  console.log('status: ' + status);
   request.get('http://wwc.instacam.com/instacamimg/ATLGM/ATLGM_l.jpg', function(error, response, imageBuffer) {
+    if (error) console.error('error getting webcam image', error);
     Jimp.read(new Buffer(imageBuffer))
     .then(function(image) {
       // index is out of 12
@@ -40,9 +43,9 @@ request(options, function(error, response, body) {
       image.quality(100 - ((factor / 12) * 100));
       image.scale(factor, Jimp.RESIZE_NEAREST_NEIGHBOR);
       image.getBuffer(Jimp.MIME_JPEG, function(err, buffer) {
-        console.log(err);
+        if (err) console.error('error getting Jimp image buffer', err);
         Bot.post('media/upload', { media_data: new Buffer(buffer).toString('base64') }, function (err, data, response) {
-          console.log(err);
+          if (err) console.error('error uploading image to Twitter', err);
           var mediaIdStr = data.media_id_string
           var meta_params = { media_id: mediaIdStr }
 
@@ -52,10 +55,11 @@ request(options, function(error, response, body) {
               var params = { status: status, media_ids: [mediaIdStr] }
          
               Bot.post('statuses/update', params, function (err, data, response) {
-                console.log('done');
+                if (err) console.error('error tweeting', err);
+                else console.log('done tweeting');
               });
             } else {
-              console.log(err);
+              console.error(err);
             }
           })
         })
