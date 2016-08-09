@@ -30,7 +30,7 @@ request(options, function(error, response, body) {
   for (var i = 0; i < body.Location.periods[1].Triggers.length; i++) {
     triggers.push(body.Location.periods[1].Triggers[i].Name);
   }
-  var status = 'The Pollen Index in Atlanta today is ' + pollenIndex + '. Triggers include: ' + triggers.join(', ') + '.';
+  var status = 'The #Pollen Index in Atlanta today is ' + pollenIndex + '. Triggers include: ' + triggers.join(', ') + '.';
   console.log('status: ' + status);
   request.get('http://wwc.instacam.com/instacamimg/ATLGM/ATLGM_l.jpg', function(error, response, imageBuffer) {
     if (error) console.error('error getting webcam image', error);
